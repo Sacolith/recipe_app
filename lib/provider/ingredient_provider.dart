@@ -5,7 +5,7 @@ class Ipovider{
      Ingredient(
       name: 'carrot',
       description: 'yellow',
-      ingredienttype: [IngredientType.vegetables]
+      ingredienttype: [IngredientType.vegetables], id: '0'
       )
   ];
 }

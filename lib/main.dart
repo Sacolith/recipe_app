@@ -13,6 +13,7 @@ await Hive.initFlutter();
 
 Hive.registerAdapter(RecipeAdapter());
 Hive.registerAdapter(RecipeTypeAdapter());
+Hive.registerAdapter(IngredientTypeAdapter());
 Hive.registerAdapter(IngredientAdapter());
 
 

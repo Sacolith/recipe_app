@@ -14,7 +14,10 @@ class Ingredient extends HiveObject{
 
   @HiveField(2)
    final String description;
-    Ingredient({ required this.ingredienttype,
+
+   @HiveField(3)
+   final String id;
+    Ingredient({ required this.id,required this.ingredienttype,
     required this.description, required this.name
    });
 }
