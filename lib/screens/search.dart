@@ -1,16 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_app/models/ingredient.dart';
 import 'package:recipe_app/models/recipe.dart';
+import 'package:recipe_app/screens/ingredients_screen.dart';
+import 'package:recipe_app/screens/recipies_screen.dart';
+import 'package:recipe_app/services/recipe_service.dart';
 import 'package:recipe_app/services/state_service.dart';
-import 'package:recipe_app/widget/container.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key, this.restID});
 
   final String? restID;
+ 
 
   @override
   State<Search> createState() => _SearchState();
@@ -48,11 +49,12 @@ class _SearchState extends State<Search> with RestorationMixin {
 
  Widget _searchBox({bool active = true}) {
   return Padding(
-    padding: const EdgeInsets.all(8),
+    padding: const EdgeInsets.all(1),
     child: Material(
       child: TextField(
         controller: searchtext.value,
         focusNode: active ? focusN : null,
+        
       ),
     ),
   );
@@ -62,7 +64,6 @@ class _SearchState extends State<Search> with RestorationMixin {
   Widget _recipeSearchResults(List<Recipe> recipes) {
     if (recipes.isEmpty) {
       return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Center(
              child: Padding(
@@ -73,6 +74,10 @@ class _SearchState extends State<Search> with RestorationMixin {
           TextButton(
             onPressed: () {
               // Add functionality to add a new recipe
+              
+              setState(() {
+                
+              });
             },
             child: const Text('Add new recipe?'),
           ),
@@ -81,26 +86,45 @@ class _SearchState extends State<Search> with RestorationMixin {
     }
    return ListView.builder(
     restorationId: 'list',
-      itemCount: recipes.length+ 1,
-      itemBuilder: (context, i) { if(i==0) 
-         { return Visibility(
-             visible: false,
-             maintainSize: true,
-             maintainAnimation: true,
-             maintainState: true,
-            child: _searchBox(active :false));
-            } else{
-              return Padding(padding: const EdgeInsets.all(8),
-              child:  Reccont(rec: recipes[i-1]),);
-            }
-      },
-    );
+      itemCount: recipes.length,
+    itemBuilder: (context, index) {
+      final recipe = recipes[index];
+      return GestureDetector(
+        child: Hero(
+          tag: 'recipe-card-${recipe.id}',
+          child: _cardInfo(recipe),
+        ),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => R_Card(recipe: recipe),
+          ),
+        ),
+      );
+    },
+  );
   }
+
+Widget _cardInfo(Recipe recipe) {
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(recipe.title, style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 8),
+          Text('Description: ${recipe.description}'),
+          const SizedBox(height: 8),
+          Text('Prep Time: ${recipe.prepTime}'),
+        ],
+      ),
+    ),
+  );
+}  
 
      Widget _ingredientSearchResults(List<Ingredient> ingredients){
       if(ingredients.isEmpty){
         return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
            const Center(
              child: Padding(padding: EdgeInsets.all(8),
@@ -113,90 +137,93 @@ class _SearchState extends State<Search> with RestorationMixin {
         );
       }
       return ListView.builder(
-        itemCount: ingredients.length +1,
+        itemCount: ingredients.length,
         itemBuilder: (context,i){
-             if(i==0) 
-         { return Visibility(
-             visible: false,
-             maintainSize: true,
-             maintainAnimation: true,
-             maintainState: true,
-            child: _searchBox(active :false));
-            } else{
-              return Padding(padding: const EdgeInsets.all(8),
-              child:  IngCon(ingredients: ingredients[i-1]),);
-            }
+           final ingredient= ingredients[i];
+           return GestureDetector(
+            child: Hero(
+              tag: 'Ingredient-card-${ingredient.id}',
+             child: _ingredientCards(ingredient),
+              ),
+              onTap: ()=> Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context)=> I_Card(ingredient: ingredient) )
+              ),
+           );
         }
         );
     }
+
+Widget _ingredientCards(Ingredient ingredient){
+  return Card(
+    child: Padding(padding: const EdgeInsets.all(8),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(ingredient.name, style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 8),
+          Text('Description: ${ingredient.description}'),
+          const SizedBox(height: 8),
+      ],
+    ),
+    ),
+  );
+}
+
 
   @override
 Widget build(BuildContext context) {
   final recipeModel = Provider.of<StaServ>(context);
   final ingredientModel = Provider.of<IngredServ>(context);
+  RecipeService n;
 
-  return UnmanagedRestorationScope(
-    child: CupertinoTabView(
-      restorationScopeId: 'tabview',
-      builder: (context) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent
-          ),
-          child: SafeArea(
-            
-            bottom: false,
-            child: Column(
-              children: [
-                SegmentedButton<Searchtype>(
-                  style: SegmentedButton.styleFrom(
-                    backgroundColor: Colors.grey[200],
-                    foregroundColor: Colors.red,
-                    selectedForegroundColor: Colors.white,
-                    selectedBackgroundColor: Colors.green,
-                  ),
-                  segments: const <ButtonSegment<Searchtype>>[
-                    ButtonSegment<Searchtype>(
-                      value: Searchtype.recipes,
-                      label: Text('Recipes'),
-                      icon: Icon(Icons.receipt_outlined),
-                    ),
-                    ButtonSegment<Searchtype>(
-                      value: Searchtype.ingredients,
-                      label: Text('Ingredients'),
-                      icon: Icon(Icons.food_bank),
-                    ),
-                  ],
-                  selected: <Searchtype>{recipeSearch},
-                  onSelectionChanged: (Set<Searchtype> newSelection) {
-                    setState(() {
-                      recipeSearch = newSelection.first;
-                    });
-                  },
-                ),
-                Expanded(
-                  child: recipeSearch == Searchtype.recipes
-                      ? Stack(
-                          children: [
-                            _recipeSearchResults(recipeModel.searchRecipe(terms)),
-                            _searchBox(),
-                          ],
-                        )
-                      : Stack(
-                          children: [
-                            _ingredientSearchResults(ingredientModel.searchIngredient(terms)),
-                            _searchBox(),
-                          ],
-                        ),
-                ),
-              ],
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Search'),
+     
+    ),
+    body: SafeArea(
+      bottom: false,
+      child: Column(
+        children: [
+          SegmentedButton<Searchtype>(
+            style: SegmentedButton.styleFrom(
+              backgroundColor: Colors.grey[200],
+              foregroundColor: Colors.red,
+              selectedForegroundColor: Colors.white,
+              selectedBackgroundColor: Colors.green,
             ),
+            segments: const <ButtonSegment<Searchtype>>[
+              ButtonSegment<Searchtype>(
+                value: Searchtype.recipes,
+                label: Text('Recipes'),
+                icon: Icon(Icons.receipt_outlined),
+              ),
+              ButtonSegment<Searchtype>(
+                value: Searchtype.ingredients,
+                label: Text('Ingredients'),
+                icon: Icon(Icons.food_bank),
+              ),
+            ],
+            selected: <Searchtype>{recipeSearch},
+            onSelectionChanged: (Set<Searchtype> newSelection) {
+              setState(() {
+                recipeSearch = newSelection.first;
+              });
+            },
           ),
-        );
-      },
+          _searchBox(),
+          Expanded(
+            child: recipeSearch == Searchtype.recipes
+                ? _recipeSearchResults(recipeModel.searchRecipe(terms))
+                : _ingredientSearchResults(ingredientModel.searchIngredient(terms)),
+          ),
+        ],
+      ),
     ),
   );
 }
-
 }
+
+
 enum Searchtype{ ingredients, recipes}

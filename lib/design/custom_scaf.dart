@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_app/design/colors.dart';
 
 bool pc(BuildContext context){
   return MediaQuery.of(context).size.width>960.0;
@@ -45,15 +46,27 @@ class _CustomScafState extends State<CustomScaf>{
      return Row(
       children: [
         Drawer(
+          width: 250,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(2),
+                  bottomRight: Radius.circular(2))
+                  
+                  ),
+                  backgroundColor: Colors.black,
+          surfaceTintColor: Cols.bright_red,
           child: Column(
             children: [
               DrawerHeader(child: Center(
                 child: widget.title ),
+                
                 ),
                 for (var t in widget.dest)
                 ListTile(
                   leading: Icon(t.icon),
                   title: Text(t.title),
+                  iconColor: Colors.white,
+                  textColor: Colors.white,
                   selected: 
                   widget.dest.indexOf(t)== widget.pageNum,
                   onTap: ()=> _tapDest(t),
@@ -62,8 +75,8 @@ class _CustomScafState extends State<CustomScaf>{
           ),
         ),
         VerticalDivider(
-          width: 2,
-          thickness: 2,
+          width: 1,
+          thickness: 1,
           color: Colors.red[300],
         ),
         Expanded(
@@ -84,21 +97,30 @@ class _CustomScafState extends State<CustomScaf>{
       appBar: AppBar(
         title: widget.title,
         actions: widget.actions),
-        body: Row(children: [
-          NavigationRail(destinations: [
-            ...widget.dest.map(
-              (t)=> NavigationRailDestination(
-                icon: Icon(t.icon), 
-              label: Text(t.title)),
-            )
-          ],
-           selectedIndex: widget.pageNum,
-           onDestinationSelected: widget.onPageChanged ?? (_) {},
-           ),
-           VerticalDivider(
-            width: 2,
-            thickness: 2,
-            color: Colors.red[300],
+        body: Row(
+          children: [
+          NavigationRail(
+                backgroundColor: Colors.black,
+                destinations: [
+                  ...widget.dest.map(
+                    (t) => NavigationRailDestination(
+                      indicatorColor: Colors.blue,
+                      icon: Icon(
+                        t.icon,
+                        color: const Color.fromARGB(255, 0, 204, 119),
+                      ),
+                      label: Text(t.title),
+                    ),
+                  )
+                ],
+                selectedIndex: widget.pageNum,
+                onDestinationSelected: widget.onPageChanged ?? (_) {},
+              ),
+            
+           const VerticalDivider(
+            width: 1,
+            thickness: 1,
+            color: Colors.black,
            ),
            Expanded(
             child: widget.body)
@@ -118,7 +140,7 @@ class _CustomScafState extends State<CustomScaf>{
       items: [
         ...widget.dest.map(
           (t)=> BottomNavigationBarItem(icon: Icon(t.icon),
-          label: t.title)
+          label: t.title,backgroundColor: Colors.black)
         ),
       ],
       currentIndex: widget.pageNum,

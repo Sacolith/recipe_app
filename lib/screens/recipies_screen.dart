@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:recipe_app/design/colors.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/provider/recipe_provider.dart';
+import 'package:recipe_app/services/recipe_service.dart';
 
 class RecipeScreen extends StatefulWidget {
   const RecipeScreen({super.key});
@@ -19,82 +21,7 @@ class _RecipeState extends State<RecipeScreen> {
     recipeBox = Hive.box<Recipe>('recipes'); 
   }
 
-  Future<void> _addRecipe() async {
-    String title = '';
-    String description = '';
-    String prepTime = '';
-    String ingredients = '';
-    RecipeType selectedType=RecipeType.dinner;
-
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Recipe'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: const InputDecoration(labelText: 'Title'),
-                onChanged: (value) => title = value,
-              ),
-              TextField(
-                decoration: const InputDecoration(labelText: 'Description'),
-                onChanged: (value) => description = value,
-              ),
-              TextField(
-                decoration: const InputDecoration(labelText: 'Prep Time'),
-                onChanged: (value) => prepTime = value,
-              ),
-              TextField(
-                decoration: const InputDecoration(labelText: 'Ingredients'),
-                onChanged: (value) => ingredients = value,
-              ),
-               DropdownButton<RecipeType>(
-              value: selectedType,
-              items: RecipeType.values.map((RecipeType type) {
-                return DropdownMenuItem<RecipeType>(
-                  value: type,
-                  child: Text(type.toString().split('.').last), 
-                );
-              }).toList(),
-              onChanged: (RecipeType? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    selectedType = newValue;
-                  });
-                  }
-      }
-      
-          )
-          ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final newRecipe = Recipe(
-                  id: DateTime.now().toString(),
-                  title: title,
-                  description: description,
-                  prepTime: prepTime,
-                  ingredients: ingredients,
-                  recipetype: [selectedType],
-                );
-                recipeBox.add(newRecipe); 
-                Navigator.of(context).pop();
-                setState(() {}); 
-              },
-              child: const Text('Add'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +31,9 @@ class _RecipeState extends State<RecipeScreen> {
       // ignore: unnecessary_to_list_in_spreads
       ...recipeBox.values.toList() 
     ];
+    final RecipeService recipeService= RecipeService(
+      context: context, 
+      recipeBox: recipeBox);
 
     return Scaffold(
       body: ListView.builder(
@@ -124,7 +54,10 @@ class _RecipeState extends State<RecipeScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addRecipe,
+        onPressed: ()async{
+           await recipeService.addRecipe();
+          setState(() {});
+        },
         tooltip: 'Add Recipe',
         child: const Icon(Icons.add),
       ),
@@ -145,19 +78,36 @@ class R_Card extends StatelessWidget {
       appBar: AppBar(),
       body: Center(
         child: Hero(
-          tag: 'recipe-card-${recipe.id}',  
-          child: _cardInfo(recipe),
+          tag: 'recipe-card-${recipe.id}', 
+          flightShuttleBuilder: (flightContext, animation, direction, fromContext, toContext) {
+            return ScaleTransition(
+              scale: animation.drive(Tween<double>(begin: 1.0, end: 1.1).chain(CurveTween(curve: Curves.easeInOut))),
+              child: _cardInfo(recipe),
+            );
+          },
+          child: _buildCardWithSize(context, recipe),  // Pass context here
         ),
       ),
+    );
+  }
+
+  Widget _buildCardWithSize(BuildContext context, Recipe recipe) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height*0.5,
+      width: MediaQuery.of(context).size.width * 0.5, // Adjust the size as needed
+      child: _cardInfo(recipe),
     );
   }
 }
 
 
+
+
 Widget _cardInfo(Recipe recipe) {
   return Card(
+    color: Cols.cyber_yellow,
     child: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

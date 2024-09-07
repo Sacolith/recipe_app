@@ -31,7 +31,6 @@ void initState(){
       appBar: AppBar(
         actions: [
          SegmentedButton<LType>(
-          
           segments: const<ButtonSegment<LType>>[
           ButtonSegment<LType>(
             value: LType.recipies,
@@ -52,6 +51,7 @@ void initState(){
          }, 
          )
       ],) ,
+      
 body: changeDisplay== LType.recipies
   ?const Stack(
     children: [

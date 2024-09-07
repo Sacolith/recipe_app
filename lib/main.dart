@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'package:recipe_app/design/colors.dart';
 import 'package:recipe_app/models/ingredient.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/screens/home_screen_setup.dart';
@@ -36,8 +37,19 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomepageSetup()
+    return  MaterialApp(
+      home: const HomepageSetup(),
+      theme: _themeData(),
     );
   }
+}
+
+ThemeData _themeData(){
+  return ThemeData(
+    appBarTheme: const AppBarTheme(
+      
+      backgroundColor: Color.fromARGB(177, 215, 213, 107)
+    ) ,
+   scaffoldBackgroundColor: Cols.rasberry
+  );
 }

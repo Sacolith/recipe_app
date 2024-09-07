@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:recipe_app/design/colors.dart';
 import 'package:recipe_app/models/ingredient.dart';
 import 'package:recipe_app/provider/ingredient_provider.dart';
-import 'package:recipe_app/widget/container.dart';
+import 'package:recipe_app/services/ingredient_service.dart';
 
 class IngredientsScreen extends StatefulWidget{
  const IngredientsScreen({super.key});
@@ -19,77 +20,18 @@ void initState(){
   ingredientBox=Hive.box<Ingredient>('ingredients');
 }
 
-Future<void> _addIngredient() async{
-  String name='';
-  String description='';
-IngredientType selected=IngredientType.meats;
-
-await showDialog(context: context,
- builder: (context){
-  return AlertDialog(
-    title: const Text('Add Ingredient'),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          decoration: const InputDecoration(labelText: 'Name'),
-          onChanged: (value)=> name=value,
-        ),
-        TextField(
-          decoration: const InputDecoration(labelText: 'Description'),
-          onChanged: (value)=> description=value,
-        ),
-        DropdownButton<IngredientType>(
-              value: selected,
-              items: IngredientType.values.map((IngredientType type) {
-                return DropdownMenuItem<IngredientType>(
-                  value: type,
-                  child: Text(type.toString().split('.').last), 
-                );
-              }).toList(),
-              onChanged: (IngredientType? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    selected = newValue;
-                  });
-                  }
-      }
-      
-          )
-      ],
-    ),
-    actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final newRecipe = Ingredient(
-                  name: name,
-                  description: description,
-                  ingredienttype: [selected],
-                   id: DateTime.now().toString(),
-                );
-                ingredientBox.add(newRecipe); 
-                Navigator.of(context).pop();
-                setState(() {}); 
-              },
-              child: const Text('Add'),
-            ),
-          ],
-  );
- });
-}
-
  @override
   Widget build(BuildContext context){
     final List<Ingredient> allIngredients=[
       ...Ipovider.ingred,
-      
       // ignore: unnecessary_to_list_in_spreads
       ...ingredientBox.values.toList()
     ];
+ final IngredientService ingredientService = IngredientService(
+      context: context,
+      ingredientBox: ingredientBox,
+    );
+
     return Scaffold(
   body: ListView.builder(
     itemCount: allIngredients.length,
@@ -102,12 +44,16 @@ await showDialog(context: context,
       ),
      onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => I_Card(ingredient: ingredients) )
+                builder: (context) => I_Card(ingredient: ingredients) 
+                )
       ),
        );
     },),
 floatingActionButton:  FloatingActionButton(
-  onPressed: _addIngredient,
+  onPressed: ()async {
+           await ingredientService.addIngredient();
+           setState(() {});
+  },
   tooltip: 'Add Ingredient',
   child: const Icon(Icons.add),
 ),
@@ -126,14 +72,31 @@ class I_Card extends StatelessWidget{
       body: Center(
         child: Hero(
           tag: 'Ingredient-card-${ingredient.id}',
-          child: _cardInfo(ingredient),),
+          flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
+            return ScaleTransition(
+              scale:animation.drive(Tween<double>(begin: 1.0, end: 1.1).chain(CurveTween(curve: Curves.easeInOut))),
+              child: _cardInfo(ingredient),
+
+               );
+          } ,
+          child: _buildCardWithSize(context,ingredient),
+          ),
         ),
      );
   }
 }
 
+Widget _buildCardWithSize(BuildContext context, Ingredient ingredient) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height*0.5,
+      width: MediaQuery.of(context).size.width * 0.5, // Adjust the size as needed
+      child: _cardInfo(ingredient),
+    );
+  }
+
 Widget _cardInfo(Ingredient ingredient) {
   return Card(
+    color: Cols.cyber_yellow,
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(

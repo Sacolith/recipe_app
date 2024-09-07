@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/design/custom_scaf.dart';
 import 'package:recipe_app/screens/home_screen.dart';
-import 'package:recipe_app/screens/meal_plan_screen.dart';
 import 'package:recipe_app/screens/search.dart';
 
 
@@ -16,19 +15,21 @@ class _HomeState extends State<HomepageSetup>{
   int page=0;
   @override 
   Widget build(BuildContext context){
-    return CustomScaf(title: const Text('Recipe app'),
+    return CustomScaf(
+      title: const Text('Recipe app',
+      style: TextStyle(color: Color.fromARGB(255, 146, 39, 39)),),
      pageNum: page,
       actions: const [
         Row(
           children: [
            Padding(padding: 
             EdgeInsets.all(8.0),
-            
             ),
+            
           ],
         )
       ],
-       
+      
         dest: const [
 CustomScafDest(title: 'Home', icon: Icons.home),
 CustomScafDest(title: 'Search', icon: Icons.search),
@@ -53,10 +54,10 @@ CustomScafDest(title: 'Favorites', icon: Icons.favorite_border),
       return const Search();
     }
     if(index==2){
-      return const MealplanScreen();
+      return const Column();
     }
     if(index==3){
-     
+     return const Column();
     }
     return null;
   }
