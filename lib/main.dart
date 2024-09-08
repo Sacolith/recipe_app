@@ -21,11 +21,14 @@ Hive.registerAdapter(IngredientAdapter());
 await Hive.openBox<Recipe>('recipes');
 await Hive.openBox<Ingredient>('ingredients');
 
+final recipeBox= await Hive.openBox<Recipe>('recipies');
+final ingredientBox= await Hive.openBox<Ingredient>('ingredients');
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => StaServ()),  // Provide StaServ here
-       ChangeNotifierProvider(create: (_) => IngredServ()) 
+        ChangeNotifierProvider(create: (_) => StaServ(recipeBox)),  // Provide StaServ here
+       ChangeNotifierProvider(create: (_) => IngredServ(ingredientBox)) 
       ],
       child: const MainApp(),
     ),

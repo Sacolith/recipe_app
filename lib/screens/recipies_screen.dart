@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:recipe_app/design/colors.dart';
 import 'package:recipe_app/models/recipe.dart';
-import 'package:recipe_app/provider/recipe_provider.dart';
 import 'package:recipe_app/services/recipe_service.dart';
+import 'package:recipe_app/services/state_service.dart';
 
 class RecipeScreen extends StatefulWidget {
   const RecipeScreen({super.key});
@@ -13,27 +13,18 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class _RecipeState extends State<RecipeScreen> {
-  late Box<Recipe> recipeBox;
-
-  @override
-  void initState() {
-    super.initState();
-    recipeBox = Hive.box<Recipe>('recipes'); 
-  }
-
  
+final Box<Recipe> rBoxinstance= Hive.box<Recipe>('recipies');
+
 
   @override
   Widget build(BuildContext context) {
-    
-    final List<Recipe> allRecipes = [
-      ...RecProv.rec, 
-      // ignore: unnecessary_to_list_in_spreads
-      ...recipeBox.values.toList() 
-    ];
+    final StaServ serv=StaServ(rBoxinstance);
+
+    final List<Recipe> allRecipes = serv.allRecipies;
     final RecipeService recipeService= RecipeService(
       context: context, 
-      recipeBox: recipeBox);
+      recipeBox: rBoxinstance);
 
     return Scaffold(
       body: ListView.builder(
@@ -99,9 +90,6 @@ class R_Card extends StatelessWidget {
     );
   }
 }
-
-
-
 
 Widget _cardInfo(Recipe recipe) {
   return Card(

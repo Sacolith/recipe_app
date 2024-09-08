@@ -58,9 +58,11 @@ class IngredientService with ChangeNotifier{
                   ingredienttype: [selected],
                   id: DateTime.now().toString(),
                 );
+                
                 ingredientBox.add(newIngredient);
                 notifyListeners();
                 Navigator.of(context).pop();
+                
               },
               child: const Text('Add'),
             ),
@@ -70,5 +72,6 @@ class IngredientService with ChangeNotifier{
     );
   }
 }
+
 
 

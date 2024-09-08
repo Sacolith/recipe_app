@@ -4,6 +4,7 @@ import 'package:recipe_app/models/ingredient.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/screens/ingredients_screen.dart';
 import 'package:recipe_app/screens/recipies_screen.dart';
+import 'package:recipe_app/services/ingredient_service.dart';
 import 'package:recipe_app/services/recipe_service.dart';
 import 'package:recipe_app/services/state_service.dart';
 
@@ -11,7 +12,6 @@ class Search extends StatefulWidget {
   const Search({super.key, this.restID});
 
   final String? restID;
- 
 
   @override
   State<Search> createState() => _SearchState();
@@ -60,8 +60,8 @@ class _SearchState extends State<Search> with RestorationMixin {
   );
 }
 
-
   Widget _recipeSearchResults(List<Recipe> recipes) {
+   
     if (recipes.isEmpty) {
       return Column(
         children: [
@@ -72,12 +72,8 @@ class _SearchState extends State<Search> with RestorationMixin {
                        ),
            ),
           TextButton(
-            onPressed: () {
-              // Add functionality to add a new recipe
+            onPressed: () async {
               
-              setState(() {
-                
-              });
             },
             child: const Text('Add new recipe?'),
           ),
@@ -170,12 +166,20 @@ Widget _ingredientCards(Ingredient ingredient){
   );
 }
 
-
   @override
 Widget build(BuildContext context) {
   final recipeModel = Provider.of<StaServ>(context);
   final ingredientModel = Provider.of<IngredServ>(context);
-  RecipeService n;
+  final recipeservice=RecipeService(
+    context: context,
+    recipeBox: recipeModel.recipeBox
+     );
+
+     final ingredientservice=IngredientService(
+      context: context,
+      ingredientBox: ingredientModel.ingredientBox
+      );
+    
 
   return Scaffold(
     appBar: AppBar(
@@ -221,9 +225,22 @@ Widget build(BuildContext context) {
         ],
       ),
     ),
+      floatingActionButton: recipeSearch == Searchtype.recipes
+          ? FloatingActionButton(
+              onPressed: () async {
+                await recipeservice.addRecipe();
+                setState(() {}); // Rebuild the screen to display the new recipe
+              },
+              tooltip: 'Add Recipe',
+              child: const Icon(Icons.add),
+            ): 
+            FloatingActionButton(onPressed: ()async{
+              await ingredientservice.addIngredient();
+              setState(() {
+                
+              });
+            })
   );
 }
 }
-
-
 enum Searchtype{ ingredients, recipes}

@@ -9,6 +9,5 @@ static List<Recipe> rec=[
   prepTime: '40 minutes', 
   ingredients: 'ingredients',
    recipetype: [RecipeType.dinner])
-
 ];
 }

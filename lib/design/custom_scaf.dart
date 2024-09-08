@@ -53,7 +53,7 @@ class _CustomScafState extends State<CustomScaf>{
                   bottomRight: Radius.circular(2))
                   
                   ),
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.grey,
           surfaceTintColor: Cols.bright_red,
           child: Column(
             children: [
@@ -100,7 +100,7 @@ class _CustomScafState extends State<CustomScaf>{
         body: Row(
           children: [
           NavigationRail(
-                backgroundColor: Colors.black,
+                backgroundColor: Colors.grey,
                 destinations: [
                   ...widget.dest.map(
                     (t) => NavigationRailDestination(

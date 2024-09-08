@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:recipe_app/design/colors.dart';
 import 'package:recipe_app/models/ingredient.dart';
-import 'package:recipe_app/provider/ingredient_provider.dart';
 import 'package:recipe_app/services/ingredient_service.dart';
+import 'package:recipe_app/services/state_service.dart';
 
 class IngredientsScreen extends StatefulWidget{
  const IngredientsScreen({super.key});
@@ -12,24 +12,15 @@ class IngredientsScreen extends StatefulWidget{
  State<IngredientsScreen> createState()=> IngredientState();
 }
 class IngredientState extends State<IngredientsScreen>{
-late Box<Ingredient> ingredientBox;
-
-@override
-void initState(){
-  super.initState();
-  ingredientBox=Hive.box<Ingredient>('ingredients');
-}
+ final Box<Ingredient> boxinstance= Hive.box<Ingredient>('ingredients');
 
  @override
   Widget build(BuildContext context){
-    final List<Ingredient> allIngredients=[
-      ...Ipovider.ingred,
-      // ignore: unnecessary_to_list_in_spreads
-      ...ingredientBox.values.toList()
-    ];
+    final IngredServ ingredServ=IngredServ(boxinstance); 
+    final List<Ingredient> allIngredients= ingredServ.allIngreds;
  final IngredientService ingredientService = IngredientService(
       context: context,
-      ingredientBox: ingredientBox,
+      ingredientBox: boxinstance,
     );
 
     return Scaffold(
