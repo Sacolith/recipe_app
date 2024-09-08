@@ -99,11 +99,11 @@ Widget _cardInfo(Recipe recipe) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(recipe.title, style: const TextStyle(fontSize: 20)),
+          Text(recipe.title, style: const TextStyle(fontSize: 30)),
           const SizedBox(height: 8),
-          Text('Description: ${recipe.description}'),
+          Text('Description: ${recipe.description}',style: const TextStyle(fontSize: 20),),
           const SizedBox(height: 8),
-          Text('Prep Time: ${recipe.prepTime}'),
+          Text('Prep Time: ${recipe.prepTime}', style: const TextStyle(fontSize: 17),),
         ],
       ),
     ),

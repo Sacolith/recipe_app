@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recipe_app/design/colors.dart';
 import 'package:recipe_app/models/ingredient.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/screens/ingredients_screen.dart';
@@ -65,6 +66,7 @@ class _SearchState extends State<Search> with RestorationMixin {
    final recMod=Provider.of<StaServ>(context);
    final recServ= RecipeService(context: context,
     recipeBox: recMod.recipeBox);
+    final RecipeScreen rScreen;
     if (recipes.isEmpty) {
       return Column(
         children: [
@@ -104,24 +106,28 @@ class _SearchState extends State<Search> with RestorationMixin {
     },
   );
   }
+//im too tired to pass this through the other way
+
 
 Widget _cardInfo(Recipe recipe) {
   return Card(
+    color: Cols.cyber_yellow,
     child: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(recipe.title, style: const TextStyle(fontSize: 20)),
+          Text(recipe.title, style: const TextStyle(fontSize: 30)),
           const SizedBox(height: 8),
-          Text('Description: ${recipe.description}'),
+          Text('Description: ${recipe.description}',style: const TextStyle(fontSize: 20),),
           const SizedBox(height: 8),
-          Text('Prep Time: ${recipe.prepTime}'),
+          Text('Prep Time: ${recipe.prepTime}', style: const TextStyle(fontSize: 17),),
+          
         ],
       ),
     ),
   );
-}  
+}
 
      Widget _ingredientSearchResults(List<Ingredient> ingredients){
       final ingreMod= Provider.of<IngredServ>(context);
@@ -153,7 +159,7 @@ Widget _cardInfo(Recipe recipe) {
            return GestureDetector(
             child: Hero(
               tag: 'Ingredient-card-${ingredient.id}',
-             child: _ingredientCards(ingredient),
+             child: _IngcardInfo(ingredient),
               ),
               onTap: ()=> Navigator.of(context).push(
                 MaterialPageRoute(
@@ -164,18 +170,20 @@ Widget _cardInfo(Recipe recipe) {
         );
     }
 
-Widget _ingredientCards(Ingredient ingredient){
+Widget _IngcardInfo(Ingredient ingredient) {
   return Card(
-    child: Padding(padding: const EdgeInsets.all(8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(ingredient.name, style: const TextStyle(fontSize: 20)),
+    color: Cols.cyber_yellow,
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(ingredient.name, style: const TextStyle(fontSize: 30)),
           const SizedBox(height: 8),
-          Text('Description: ${ingredient.description}'),
+          Text('Description: ${ingredient.description}',style: const TextStyle(fontSize: 20),),
           const SizedBox(height: 8),
-      ],
-    ),
+        ],
+      ),
     ),
   );
 }

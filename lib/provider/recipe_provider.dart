@@ -6,7 +6,7 @@ static List<Recipe> rec=[
  const Recipe(
     id: '0',
    title: 'Chicken alfredo Pasta', 
-   description: '2 boneless chicken breasts,1tbsp cooking oil, 2 tbsp butter,4 garlic cloves (Minced)', 
+   description: 'A Simple Meal to enjoy with friends and family', 
   prepTime: '40 minutes', 
   ingredients: '',
    recipetype: [RecipeType.dinner])

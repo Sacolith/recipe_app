@@ -93,9 +93,9 @@ Widget _cardInfo(Ingredient ingredient) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(ingredient.name, style: const TextStyle(fontSize: 20)),
+          Text(ingredient.name, style: const TextStyle(fontSize: 30)),
           const SizedBox(height: 8),
-          Text('Description: ${ingredient.description}'),
+          Text('Description: ${ingredient.description}',style: const TextStyle(fontSize: 20),),
           const SizedBox(height: 8),
         ],
       ),
