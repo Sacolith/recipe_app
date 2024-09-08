@@ -8,6 +8,7 @@ import 'package:recipe_app/services/ingredient_service.dart';
 import 'package:recipe_app/services/recipe_service.dart';
 import 'package:recipe_app/services/state_service.dart';
 
+// this projects search features was influenced by flutter sample: https://github.com/flutter/samples/tree/master_archived/veggieseasons
 class Search extends StatefulWidget {
   const Search({super.key, this.restID});
 
@@ -61,7 +62,9 @@ class _SearchState extends State<Search> with RestorationMixin {
 }
 
   Widget _recipeSearchResults(List<Recipe> recipes) {
-   
+   final recMod=Provider.of<StaServ>(context);
+   final recServ= RecipeService(context: context,
+    recipeBox: recMod.recipeBox);
     if (recipes.isEmpty) {
       return Column(
         children: [
@@ -73,7 +76,9 @@ class _SearchState extends State<Search> with RestorationMixin {
            ),
           TextButton(
             onPressed: () async {
-              
+              recServ.addRecipe();
+              setState(() {
+              });
             },
             child: const Text('Add new recipe?'),
           ),
@@ -119,6 +124,11 @@ Widget _cardInfo(Recipe recipe) {
 }  
 
      Widget _ingredientSearchResults(List<Ingredient> ingredients){
+      final ingreMod= Provider.of<IngredServ>(context);
+      final ingredService=IngredientService(
+      context: context,
+      ingredientBox: ingreMod.ingredientBox
+      );
       if(ingredients.isEmpty){
         return Column(
           children: [
@@ -127,7 +137,11 @@ Widget _cardInfo(Recipe recipe) {
               child: Text('Ingredient not in database'),
               ),
            ),
-            TextButton(onPressed: (){
+            TextButton(onPressed: ()async{
+               await ingredService.addIngredient();
+               setState(() {
+                 
+               });
             }, child: const Text('Add ingredient'))
           ],
         );
@@ -239,7 +253,10 @@ Widget build(BuildContext context) {
               setState(() {
                 
               });
-            })
+            },
+            tooltip: 'Add Ingredient',
+            child: const Icon(Icons.add),
+            )
   );
 }
 }

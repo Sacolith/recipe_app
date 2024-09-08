@@ -1,8 +1,11 @@
 
 import 'package:hive_flutter/adapters.dart';
 
+///generate this file make sure you have hive_generator in dev dependences  and flutter build runner
+///generate by going to terminal and entering "flutter packages pub run build_runner build"
 part 'ingredient.g.dart';
 
+//setting up the hive database (Remember)each typeId is unique
 @HiveType(typeId: 2)
 class Ingredient extends HiveObject{
 

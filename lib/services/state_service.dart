@@ -5,6 +5,7 @@ import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/provider/ingredient_provider.dart';
 import 'package:recipe_app/provider/recipe_provider.dart';
 
+//creates the recipe box used by the app and search results values
 class StaServ extends ChangeNotifier{
   final List<Recipe> _rec;
   final Box<Recipe> _recipeBox;
@@ -23,7 +24,7 @@ Box<Recipe> get recipeBox=> _recipeBox;
   .where((t)=>t.title.toLowerCase().contains(terms!.toLowerCase()))
   .toList();
 }
-
+//creates the Ingredients box used by the app and search results values
 class IngredServ extends ChangeNotifier{
   final List<Ingredient> _ingred;
 final Box<Ingredient> _ingredBox;

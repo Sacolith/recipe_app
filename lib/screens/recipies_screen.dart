@@ -76,7 +76,7 @@ class R_Card extends StatelessWidget {
               child: _cardInfo(recipe),
             );
           },
-          child: _buildCardWithSize(context, recipe),  // Pass context here
+          child: _buildCardWithSize(context, recipe),
         ),
       ),
     );
@@ -85,7 +85,7 @@ class R_Card extends StatelessWidget {
   Widget _buildCardWithSize(BuildContext context, Recipe recipe) {
     return SizedBox(
       height: MediaQuery.of(context).size.height*0.5,
-      width: MediaQuery.of(context).size.width * 0.5, // Adjust the size as needed
+      width: MediaQuery.of(context).size.width * 0.5,
       child: _cardInfo(recipe),
     );
   }

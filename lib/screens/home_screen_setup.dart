@@ -3,7 +3,7 @@ import 'package:recipe_app/design/custom_scaf.dart';
 import 'package:recipe_app/screens/home_screen.dart';
 import 'package:recipe_app/screens/search.dart';
 
-
+//I used the flutter sample as reference for this code https://flutter.github.io/samples/web_dashboard.html
 class HomepageSetup extends StatefulWidget{
 const HomepageSetup({super.key});
 
