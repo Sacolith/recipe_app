@@ -31,7 +31,7 @@ final Box<Ingredient> _ingredBox;
   IngredServ(this._ingredBox) :_ingred= Ipovider.ingred;
 
   List<Ingredient>get allIngreds=>[
-    ...Ipovider.ingred,
+    ..._ingred,
     // ignore: unnecessary_to_list_in_spreads
     ..._ingredBox.values.toList(),
   ];
