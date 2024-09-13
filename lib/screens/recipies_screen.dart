@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:recipe_app/design/colors.dart';
+import 'package:recipe_app/constants/build_card_with_size.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/services/recipe_service.dart';
 import 'package:recipe_app/services/state_service.dart';
+import 'package:recipe_app/widget/recipe_cardinfo.dart';
 
 class RecipeScreen extends StatefulWidget {
   const RecipeScreen({super.key});
@@ -25,7 +26,7 @@ final Box<Recipe> rBoxinstance= Hive.box<Recipe>('recipies');
     final RecipeService recipeService= RecipeService(
       context: context, 
       recipeBox: rBoxinstance);
-
+    
     return Scaffold(
       body: ListView.builder(
         itemCount: allRecipes.length,
@@ -34,7 +35,7 @@ final Box<Recipe> rBoxinstance= Hive.box<Recipe>('recipies');
           return GestureDetector(
             child: Hero(
               tag: 'recipe-card-${recipe.id}', 
-              child: _cardInfo(recipe),
+              child: RecipeCardinfo(recipe:recipe),
             ),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -73,39 +74,14 @@ class R_Card extends StatelessWidget {
           flightShuttleBuilder: (flightContext, animation, direction, fromContext, toContext) {
             return ScaleTransition(
               scale: animation.drive(Tween<double>(begin: 1.0, end: 1.1).chain(CurveTween(curve: Curves.easeInOut))),
-              child: _cardInfo(recipe),
+              child: RecipeCardinfo(recipe:recipe),
             );
           },
-          child: _buildCardWithSize(context, recipe),
+          child: buildCardWithSizeRec(context, recipe),
         ),
       ),
     );
   }
 
-  Widget _buildCardWithSize(BuildContext context, Recipe recipe) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height*0.5,
-      width: MediaQuery.of(context).size.width * 0.5,
-      child: _cardInfo(recipe),
-    );
-  }
 }
 
-Widget _cardInfo(Recipe recipe) {
-  return Card(
-    color: Cols.cyber_yellow,
-    child: Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(recipe.title, style: const TextStyle(fontSize: 30)),
-          const SizedBox(height: 8),
-          Text('Description: ${recipe.description}',style: const TextStyle(fontSize: 20),),
-          const SizedBox(height: 8),
-          Text('Prep Time: ${recipe.prepTime}', style: const TextStyle(fontSize: 17),),
-        ],
-      ),
-    ),
-  );
-}

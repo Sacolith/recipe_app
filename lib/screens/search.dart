@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:recipe_app/design/colors.dart';
 import 'package:recipe_app/models/ingredient.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/screens/ingredients_screen.dart';
@@ -8,6 +7,9 @@ import 'package:recipe_app/screens/recipies_screen.dart';
 import 'package:recipe_app/services/ingredient_service.dart';
 import 'package:recipe_app/services/recipe_service.dart';
 import 'package:recipe_app/services/state_service.dart';
+import 'package:recipe_app/widget/ingredient_card_info.dart';
+import 'package:recipe_app/widget/recipe_cardinfo.dart';
+import 'package:recipe_app/widget/segbutton.dart';
 
 // this projects search features was influenced by flutter sample: https://github.com/flutter/samples/tree/master_archived/veggieseasons
 class Search extends StatefulWidget {
@@ -66,7 +68,6 @@ class _SearchState extends State<Search> with RestorationMixin {
    final recMod=Provider.of<StaServ>(context);
    final recServ= RecipeService(context: context,
     recipeBox: recMod.recipeBox);
-    final RecipeScreen rScreen;
     if (recipes.isEmpty) {
       return Column(
         children: [
@@ -95,7 +96,7 @@ class _SearchState extends State<Search> with RestorationMixin {
       return GestureDetector(
         child: Hero(
           tag: 'recipe-card-${recipe.id}',
-          child: _cardInfo(recipe),
+          child: RecipeCardinfo(recipe:recipe),
         ),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
@@ -106,28 +107,7 @@ class _SearchState extends State<Search> with RestorationMixin {
     },
   );
   }
-//im too tired to pass this through the other way
 
-
-Widget _cardInfo(Recipe recipe) {
-  return Card(
-    color: Cols.cyber_yellow,
-    child: Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(recipe.title, style: const TextStyle(fontSize: 30)),
-          const SizedBox(height: 8),
-          Text('Description: ${recipe.description}',style: const TextStyle(fontSize: 20),),
-          const SizedBox(height: 8),
-          Text('Prep Time: ${recipe.prepTime}', style: const TextStyle(fontSize: 17),),
-          
-        ],
-      ),
-    ),
-  );
-}
 
      Widget _ingredientSearchResults(List<Ingredient> ingredients){
       final ingreMod= Provider.of<IngredServ>(context);
@@ -159,7 +139,7 @@ Widget _cardInfo(Recipe recipe) {
            return GestureDetector(
             child: Hero(
               tag: 'Ingredient-card-${ingredient.id}',
-             child: _IngcardInfo(ingredient),
+             child: IngredientCardInfo(ingredient:ingredient),
               ),
               onTap: ()=> Navigator.of(context).push(
                 MaterialPageRoute(
@@ -169,30 +149,11 @@ Widget _cardInfo(Recipe recipe) {
         }
         );
     }
-
-Widget _IngcardInfo(Ingredient ingredient) {
-  return Card(
-    color: Cols.cyber_yellow,
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(ingredient.name, style: const TextStyle(fontSize: 30)),
-          const SizedBox(height: 8),
-          Text('Description: ${ingredient.description}',style: const TextStyle(fontSize: 20),),
-          const SizedBox(height: 8),
-        ],
-      ),
-    ),
-  );
-}
-
   @override
 Widget build(BuildContext context) {
   final recipeModel = Provider.of<StaServ>(context);
   final ingredientModel = Provider.of<IngredServ>(context);
-  final recipeservice=RecipeService(
+ final recipeservice=RecipeService(
     context: context,
     recipeBox: recipeModel.recipeBox
      );
@@ -201,53 +162,33 @@ Widget build(BuildContext context) {
       context: context,
       ingredientBox: ingredientModel.ingredientBox
       );
-    
-
   return Scaffold(
     appBar: AppBar(
       title: const Text('Search'),
-     
+     actions: [
+       Segbutton(
+         selectedSearchType: recipeSearch,
+          onSelectionChanged: (Searchtype newType) {
+            setState(() {
+              recipeSearch = newType;
+            });
+          },
+       )
+     ],
     ),
-    body: SafeArea(
-      bottom: false,
-      child: Column(
-        children: [
-          SegmentedButton<Searchtype>(
-            style: SegmentedButton.styleFrom(
-              backgroundColor: Colors.grey[200],
-              foregroundColor: Colors.red,
-              selectedForegroundColor: Colors.white,
-              selectedBackgroundColor: Colors.green,
-            ),
-            segments: const <ButtonSegment<Searchtype>>[
-              ButtonSegment<Searchtype>(
-                value: Searchtype.recipes,
-                label: Text('Recipes'),
-                icon: Icon(Icons.receipt_outlined),
-              ),
-              ButtonSegment<Searchtype>(
-                value: Searchtype.ingredients,
-                label: Text('Ingredients'),
-                icon: Icon(Icons.food_bank),
-              ),
-            ],
-            selected: <Searchtype>{recipeSearch},
-            onSelectionChanged: (Set<Searchtype> newSelection) {
-              setState(() {
-                recipeSearch = newSelection.first;
-              });
-            },
-          ),
-          _searchBox(),
-          Expanded(
+    body: Column(
+      children: [
+        _searchBox(),
+        Expanded(
             child: recipeSearch == Searchtype.recipes
                 ? _recipeSearchResults(recipeModel.searchRecipe(terms))
                 : _ingredientSearchResults(ingredientModel.searchIngredient(terms)),
           ),
-        ],
-      ),
+         
+      ],
+      
     ),
-      floatingActionButton: recipeSearch == Searchtype.recipes
+    floatingActionButton: recipeSearch == Searchtype.recipes
           ? FloatingActionButton(
               onPressed: () async {
                 await recipeservice.addRecipe();
@@ -264,8 +205,7 @@ Widget build(BuildContext context) {
             },
             tooltip: 'Add Ingredient',
             child: const Icon(Icons.add),
-            )
+            ),
   );
 }
 }
-enum Searchtype{ ingredients, recipes}

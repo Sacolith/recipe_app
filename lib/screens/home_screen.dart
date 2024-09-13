@@ -3,6 +3,7 @@ import 'package:recipe_app/provider/ingredient_provider.dart';
 import 'package:recipe_app/provider/recipe_provider.dart';
 import 'package:recipe_app/screens/ingredients_screen.dart';
 import 'package:recipe_app/screens/recipies_screen.dart';
+import 'package:recipe_app/widget/segbutton.dart';
 
 class HomeScreen extends StatefulWidget{
   const HomeScreen({
@@ -16,7 +17,7 @@ class HomeScreen extends StatefulWidget{
 class _HomeState extends State<HomeScreen>{  
   late List rec;
   late List ing;
-  LType changeDisplay=LType.recipies;
+  Searchtype changeDisplay= Searchtype.recipes;
  
 
 @override
@@ -30,29 +31,15 @@ void initState(){
     return Scaffold(
       appBar: AppBar(
         actions: [
-         SegmentedButton<LType>(
-          segments: const<ButtonSegment<LType>>[
-          ButtonSegment<LType>(
-            value: LType.recipies,
-            label: Text('Recipies'),
-            icon: Icon(Icons.receipt)
-          ),
-          ButtonSegment<LType>(
-            value: LType.ingredients,
-            label: Text('Ingredients'),
-            icon: Icon(Icons.food_bank) 
-             ),
-         ],
-          selected: <LType>{changeDisplay},
-         onSelectionChanged: (Set<LType> newSelection){
-          setState(() {
-            changeDisplay= newSelection.first;
-          });
-         }, 
-         )
+         Segbutton(selectedSearchType: changeDisplay,
+          onSelectionChanged: (Searchtype newtype){
+            setState(() {
+              changeDisplay=newtype;
+            });
+          })
       ],) ,
       
-body: changeDisplay== LType.recipies
+body: changeDisplay== Searchtype.recipes
   ?const Stack(
     children: [
       RecipeScreen()
@@ -65,4 +52,3 @@ body: changeDisplay== LType.recipies
     );
   }
 }
-enum LType{recipies,ingredients}
