@@ -11,3 +11,4 @@ Packages: Hive, hive_flutter,provider,build_runner.
 
 Installation and Setup git clone https://github.com/Sacolith/recipe_app cd recipe-app flutter pub get,
 flutter run
+Visual demo: https://www.linkedin.com/posts/sacqlain-brown-31b089269_flutter-flutterdevelopment-crossplatformapp-activity-7238405372368101378-6qV8?utm_source=share&utm_medium=member_desktop
